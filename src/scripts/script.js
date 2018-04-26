@@ -1,1 +1,0 @@
-"use strict";console.log("Testing");var o={one:"one",two:"two",three:"three"},e=o.one,t=o.two,n=o.three;console.log("nah"),console.log(e);

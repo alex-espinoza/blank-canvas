@@ -7,6 +7,6 @@ const cool = {
 }
 let { one, two, three } = cool;
 console.log('nah');
-console.log(one);
+console.log(three);
 
 

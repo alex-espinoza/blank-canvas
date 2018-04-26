@@ -7,11 +7,13 @@ var cssnext = require('postcss-cssnext');
 var cssnano = require('cssnano');
 var babel = require('gulp-babel');
 var uglify = require('gulp-uglify');
+var rename = require("gulp-rename");
+var concat = require('gulp-concat');
+var gutil = require('gulp-util');
 var pump = require('pump');
 var browserSync = require('browser-sync').create();
-var gutil = require('gulp-util');
 
-gulp.task('serve', ['sass', 'javascript'], function() {
+gulp.task('serve', ['sass', 'javascript', 'vendor-css', 'vendor-js'], function() {
   browserSync.init({
     server: {
       baseDir: './',
@@ -49,11 +51,33 @@ gulp.task('javascript', function() {
             presets: ['@babel/env']
           }))
           .pipe(uglify(options).on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); }))
+          .pipe(rename("site.min.js"))
           .pipe(gulp.dest('./src/scripts/'))
 });
 
 gulp.task('javascript-reload', ['javascript'], function() {
   browserSync.reload();
+});
+
+gulp.task('vendor-css', function() {
+  var files = [
+    'src/vendor-css/jquery.fullpage.min.css',
+  ];
+
+  return gulp.src(files)
+          .pipe(concat('vendor.min.css'))
+          .pipe(gulp.dest('./src/css/'))
+});
+
+gulp.task('vendor-js', function() {
+  var files = [
+    'src/vendor-js/jquery-3.3.1.min.js',
+    'src/vendor-js/jquery.fullpage.min.js',
+  ];
+
+  return gulp.src(files)
+          .pipe(concat('vendor.min.js'))
+          .pipe(gulp.dest('./src/scripts/'))
 });
 
 gulp.task('default', ['serve']);
