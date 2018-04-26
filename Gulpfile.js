@@ -1,13 +1,13 @@
 'use strict';
 
 var gulp = require('gulp');
-var postcss = require('gulp-postcss');
 var sass = require('gulp-sass');
+var postcss = require('gulp-postcss');
 var cssnext = require('postcss-cssnext');
 var cssnano = require('cssnano');
 var browserSync = require('browser-sync').create();
 
-gulp.task('serve', ['sass'], function() {
+gulp.task('serve', ['sass, javascripts'], function() {
   browserSync.init({
     server: {
       baseDir: './',
@@ -15,20 +15,21 @@ gulp.task('serve', ['sass'], function() {
     }
   });
 
-  gulp.watch('sass/*.sass', ['sass']);
-  gulp.watch('html/*.html').on('change', browserSync.reload);
+  gulp.watch('source/sass/*.sass', ['sass']);
+  gulp.watch('source/js/*.js').on('change', browserSync.reload);
+  gulp.watch('source/*.html').on('change', browserSync.reload);
 });
 
 gulp.task('sass', function() {
-  var processors = [
-    cssnext,
-    //cssnano
+  var plugins = [
+    cssnext({browsers: ['> 1%']}),
+    cssnano()
   ];
 
-  return gulp.src('sass/*.sass')
+  return gulp.src('source/sass/*.sass')
           .pipe(sass().on('error', sass.logError))
-          .pipe(postcss(processors))
-          .pipe(gulp.dest('./css/'))
+          .pipe(postcss(plugins))
+          .pipe(gulp.dest('./source/css/'))
           .pipe(browserSync.stream());
 });
 
