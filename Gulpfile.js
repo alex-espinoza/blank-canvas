@@ -13,6 +13,8 @@ var gutil = require('gulp-util');
 var pump = require('pump');
 var browserSync = require('browser-sync').create();
 
+gulp.task('build', ['sass', 'javascript', 'vendor-css', 'vendor-js']);
+
 gulp.task('serve', ['sass', 'javascript', 'vendor-css', 'vendor-js'], function() {
   browserSync.init({
     server: {
@@ -70,12 +72,19 @@ gulp.task('vendor-css', function() {
 });
 
 gulp.task('vendor-js', function() {
+  var options = {
+    mangle: {
+      toplevel: true,
+    },
+  };
+
   var files = [
     'src/vendor-js/jquery-3.3.1.min.js',
     'src/vendor-js/jquery.fullpage.min.js',
   ];
 
   return gulp.src(files)
+          .pipe(uglify(options).on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); }))
           .pipe(concat('vendor.min.js'))
           .pipe(gulp.dest('./src/scripts/'))
 });
